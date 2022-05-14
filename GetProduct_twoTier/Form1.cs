@@ -12,134 +12,164 @@ using System.Windows.Forms;
 
 namespace GetProduct_twoTier
 {
-    public partial class Form1 : Form
-    {
-        Product product = new Product();
+	public partial class Form1 : Form
+	{
+		Product currentproduct = new Product();
+		SqlCommand command = new SqlCommand();
+		string connectionString = "server=DESKTOP-29SJ1T7; database=GetPro; Integrated Security=true";
 
+		SqlConnection connection;
 
-        string connectionString = "Server=DESKTOP-29SJ1T7; database=GetProduct; Integrated Security=true";
+		public Form1()
+		{
+			InitializeComponent();
+			connection = new SqlConnection(connectionString);
+		}
 
-        SqlConnection connection;
+		private void btnIsert_Click(object sender, EventArgs e)
+		{
+			currentproduct.ProductName = txtItem.Text;
+			currentproduct.Design = txtDesign.Text;
+			currentproduct.Color = txtColor.Text;
 
-        public Form1()
+			string commandText = String.Format("Insert into Gproducts(ProductName,Design,Color)" +
+				"values('{0}','{1}','{2}')", currentproduct.ProductName, currentproduct.Design, currentproduct.Color);
+			  
+			command = new SqlCommand(commandText, connection);
+
+			connection.Open();
+			command.ExecuteNonQuery();
+			connection.Close();
+			RefreshGridviewproduct();
+			clearform();
+		}
+
+		private void txtProductID_TextChanged(object sender, EventArgs e)
+		{
+
+		}
+
+		private void txtItem_TextChanged(object sender, EventArgs e)
+		{
+
+		}
+
+		private void Form1_Load(object sender, EventArgs e)
+		{
+			RefreshGridviewproduct();
+			txtProductID.ReadOnly = true;
+		}
+
+		private void btnUpdate_Click(object sender, EventArgs e)
+		{
+			currentproduct.ProductName = txtItem.Text;
+			currentproduct.Design = txtDesign.Text;
+			currentproduct.Color = txtColor.Text;
+
+			string commandText = string.Format("Update Gproducts set ProductName='{1}',Design='{2}',Color='{3}'" + "where ProductID ={0}"
+				, currentproduct.ProductID, currentproduct.ProductName, currentproduct.Design, currentproduct.Color);
+
+			command = new SqlCommand(commandText, connection);
+
+			connection.Open();
+			command.ExecuteNonQuery();
+			connection.Close();
+
+			RefreshGridviewproduct();
+			clearform();
+		}
+
+		private void btnDelete_Click(object sender, EventArgs e)
+		{
+			currentproduct.ProductName = txtItem.Text;
+			currentproduct.Design = txtDesign.Text;
+			currentproduct.Color = txtColor.Text;
+
+			string commandText = String.Format("Delete from Gproducts where ProductID = {0}", currentproduct.ProductID);
+				
+			SqlCommand command = new SqlCommand(commandText, connection);
+
+			connection.Open();
+			command.ExecuteNonQuery();
+			connection.Close();
+			RefreshGridviewproduct();
+			clearform();
+		}
+		private void clearform()
         {
-            InitializeComponent();
-            connection = new SqlConnection(connectionString);
+			txtColor.Text = "";
+			txtDesign.Text = "";
+			txtItem.Text = "";
         }
+		private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+		{
 
-        private void btnIsert_Click(object sender, EventArgs e)
-        {
-            string commandText = $"Insert into GProduct values('{product.ProductName}', '{product.Design}'," +
-              $" {product.Color}, {product.ProductID} )";
+		}
 
-            SqlCommand command = new SqlCommand(commandText, connection);
+		private void txtColor_TextChanged(object sender, EventArgs e)
+		{
 
-            connection.Open();
-            command.ExecuteNonQuery();
-            connection.Close();
-        }
+		}
 
-        private void txtProductID_TextChanged(object sender, EventArgs e)
-        {
+		private void lblItemName_Click(object sender, EventArgs e)
+		{
 
-        }
+		}
 
-        private void txtItem_TextChanged(object sender, EventArgs e)
-        {
+		private void lblColor_Click(object sender, EventArgs e)
+		{
 
-        }
+		}
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            string command = "Select * from GProduct";
+		private void txtDesign_TextChanged(object sender, EventArgs e)
+		{
 
-            SqlCommand sqlCommand = new SqlCommand(command, connection);
+		}
 
-            SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+		private void lblDesign_Click(object sender, EventArgs e)
+		{
 
-            DataTable dt = new DataTable();
+		}
 
-            sqlDataAdapter.Fill(dt);
+		private void lblProdectID_Click(object sender, EventArgs e)
+		{
 
-            dataGridView1.DataSource = dt;
-        }
+		}
 
-        private void btnUpdate_Click(object sender, EventArgs e)
-        {
-            string commandText = $"Update GProduct Set " +
-                $"ProductName = '{product.ProductName}', " +
-                $"Design = '{product.Design}', " +
-                $"Color = '{product.Color}', " +
-                $"ProductID = {product.ProductID} " +
-                $"where ProductID = {product.ProductID}";
+		private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+		{
+			currentproduct = new Product();
 
-            SqlCommand command = new SqlCommand(commandText, connection);
+			DataGridViewRow row = new DataGridViewRow();
+			row = dataGridView1.Rows[e.RowIndex];
 
-            connection.Open();
-            command.ExecuteNonQuery();
-            connection.Close();
+			currentproduct.ProductID = int.Parse(row.Cells[0].Value.ToString());
+			currentproduct.ProductName = row.Cells[1].Value.ToString();
+			currentproduct.Design = row.Cells[2].Value.ToString();
+			currentproduct.Color = row.Cells[3].Value.ToString();
 
-        }
+			txtItem.Text = currentproduct.ProductName;
+			txtDesign.Text = currentproduct.Design;
+			txtColor.Text = currentproduct.Color;
+		}
+		public DataTable gettcomannd()
+		{
+			string command =String.Format("Select * from Gproducts");
 
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
+			SqlCommand sqlCommand = new SqlCommand(command, connection);
 
-            string commandText = $"Delete from GProduct where ProdectID = {product.ProductID}";
+			SqlDataAdapter da = new SqlDataAdapter(sqlCommand);
 
-            SqlCommand command = new SqlCommand(commandText, connection);
+			DataTable dt = new DataTable();
 
-            connection.Open();
-            command.ExecuteNonQuery();
-            connection.Close();
-        }
+			da.Fill(dt);
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
-        private void txtColor_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void lblItemName_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void lblColor_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtDesign_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void lblDesign_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void lblProdectID_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            DataGridViewRow row = new DataGridViewRow();
-            row = dataGridView1.Rows[e.RowIndex];
-
-            product.StudentId = int.Parse(row.Cells[0].Value.ToString());
-            product.StudentFirstName = row.Cells[1].Value.ToString();
-            product.StudentLastName = row.Cells[2].Value.ToString();
-
-            txtStudentFirstName.Text = product.StudentFirstName;
-            txtStudentLastName.Text = product.StudentLastName;
-        }
-    }
+			return dt;
+		}
+		private void RefreshGridviewproduct()
+		{
+			dataGridView1.DataSource = gettcomannd();
+		}
+	}
 }
 

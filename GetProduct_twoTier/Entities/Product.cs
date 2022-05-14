@@ -6,15 +6,12 @@ using System.Threading.Tasks;
 
 namespace GetProduct_twoTier.Entities
 {
-    internal class Product
+    public class Product
     {
         public int ProductID { get; set; }
         public string ProductName { get; set; }
         public string Design { get; set; }
-        public double Color { get; set; }
+        public string Color { get; set; }
 
     }
-
-
-
 }

@@ -1,7 +1,7 @@
-﻿Create Database GetProd
+﻿Create Database GetPro
 Go
 
-Use GetProd
+Use GetPro
 Go
 
 Create Table Gproducts
